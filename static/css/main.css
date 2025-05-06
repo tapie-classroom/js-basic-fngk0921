@@ -1,0 +1,13 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background: #faf8ef;
+    font-family: 'Arial', sans-serif;
+  }
+  canvas {
+    background: #bdb2a8;
+    border-radius: 6px;
+  }
