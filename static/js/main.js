@@ -75,5 +75,19 @@ function addRandomTile() {
   }
 }
 
+document.addEventListener('keydown', e => {
+  const keydir = { // 방향키에 맞는 좌표 이동 방향
+    ArrowUp:[0,-1],
+    ArrowDown:[0,1],
+    ArrowLeft:[-1,0],
+    ArrowRight:[1,0]
+  }[e.key]; // 방향키에 따라 이동
+  if (!keydir) return; // 방향키가 아니면 리턴
+  if (move(dir[0], dir[1])) // 입력한 방향키의 방향 x, y 전달
+    setTimeout(addRandomTile, 200); // 0.2초 후에 랜덤 타일 생성 (애니매이션 기다리기)
+})
+
+
+addRandomTile(); // 랜덤 타일 생성
 const t = new Tile(256, 1, 1);
 t.draw();
