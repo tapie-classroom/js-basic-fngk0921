@@ -2,7 +2,7 @@ const arrySzie = 4;
 const tileSize = 100;
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let tiles = [];
+let tiles = []; // 타일 저장
 
 function getColor(value) {
   switch (value) {
@@ -48,6 +48,30 @@ class Tile {
   update() {
     this.px += (this.x - this.px) * 0.3;
     this.py += (this.y - this.py) * 0.3;
+  }
+}
+
+function addRandomTile() {
+  let setTileArry = {}; // 타일이 있는 좌표를 저장
+  let emptysTile = []; // 비어있는 타일 좌표를 저장
+
+  tiles.forEach(t => { 
+    if (t.active) setTileArry[`${t.x},${t.y}`] = true; 
+  });
+  
+  // 4x4 배열 다돌면서 위에 있던 setTileArry에 없으면 비어있는 타일로 간주
+  for (let i = 0; i < 4; i++) { 
+    for (let j = 0; j < 4; j++) {
+      if (!setTileArry[`${i},${j}`]) emptysTile.push([i, j]);
+    }
+  }
+
+  if (emptysTile.length > 0) { // 비어있는 타일이 있으면
+    const randomIndex = Math.floor(Math.random() * emptysTile.length); // 빈칸 리스트의 랜덤 인덱스 가져오기
+    const [x, y] = emptysTile[randomIndex]; // 빈칸 리스트의 랜덤 인덱스의 좌표 가져오기
+    const value = Math.random() < 0.9 ? 2 : 4; // 2랑 4 중 9:1 확률로 나오기
+    
+    tiles.push(new Tile(value, x, y)); // 타일 생성
   }
 }
 
