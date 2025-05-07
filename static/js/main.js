@@ -83,7 +83,7 @@ document.addEventListener('keydown', e => {
     ArrowRight:[1,0]
   }[e.key]; // 방향키에 따라 이동
   if (!keydir) return; // 방향키가 아니면 리턴
-  if (move(dir[0], dir[1])) // 입력한 방향키의 방향 x, y 전달
+  if (move(keydir[0], keydir[1])) // 입력한 방향키의 방향 x, y 전달
     setTimeout(addRandomTile, 200); // 0.2초 후에 랜덤 타일 생성 (애니매이션 기다리기)
 })
 
@@ -133,6 +133,20 @@ function move(dx, dy) {
   return moved // 이동 여부 리턴
 }
 
-addRandomTile(); // 랜덤 타일 생성
-const t = new Tile(256, 1, 1);
-t.draw();
+
+function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 싹날림
+  tiles.forEach(t => {
+    t.update()
+    if (t.active) t.draw()
+  }); // 활성화 된 얘들 그림
+  requestAnimationFrame(loop); // 애니매이션 프레임 요청 (계속 반복)
+}
+
+function init() { // 맨처음 시작
+  tiles = [];
+  addRandomTile() // 처음에 2개 생성하고 시작
+  addRandomTile() 
+  loop();
+}
+init();
