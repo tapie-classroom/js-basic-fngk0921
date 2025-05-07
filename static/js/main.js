@@ -87,6 +87,51 @@ document.addEventListener('keydown', e => {
     setTimeout(addRandomTile, 200); // 0.2초 후에 랜덤 타일 생성 (애니매이션 기다리기)
 })
 
+function move(dx, dy) {
+  let moved = false; // 이동 여부 (마지막에 리턴)
+  tiles.forEach(t => t.merged = false); // 타일 합쳐진 여부 리셋
+
+  // 이동 순서: 방향에 따라 정렬
+  tiles.sort((a, b) => (b.y-a.y)*dy + (b.x-a.x)*dx); // 방향에 따라 정렬
+  // 화살표키 누른 방향 쪽부터 처리 해야하기에 누른 방향(dx, dy)에 값 부호따라 우선순위 판단
+
+
+  for (let t of tiles) { // 타일을 하나씩 돌면서
+    if (!t.active) continue; // 비활성화된 타일은 건너뜀
+    // nx, ny -> 현재 좌표 (0~3)
+    let nx = t.x
+    let ny = t.y
+    while (true) { // 계속하여 화살표 키 누른 방향으로 이동
+      let tx = nx + dx
+      let ty = ny + dy
+      // tx, ty -> 이동할 좌표 (0~3)
+
+      if (tx<0 || tx>=arrySzie || ty<0 || ty>=arrySzie) break; // 좌표 범위가 넘어가면 와일 종료
+
+      let otherTile = tiles.find(u => u.x==tx && u.y==ty && u.active); // 이동할 좌표에 타일 체크
+      
+      if (!otherTile) { // 이동할 좌표에 타일 없음
+        nx=tx // 타일 좌표 변경
+        ny=ty
+        moved=true // 이동했으니 true
+      }
+      else if (otherTile.value==t.value && !otherTile.merged) { // 타일이 있는데 값이 같고 합쳐지지 않았으면
+        otherTile.value *= 2 // 자리에 있던 타일 2배하기
+        otherTile.merged = true // 타일 합쳐짐 처리 (추가 타일 병합 방지)
+        t.active = false // 이동한 타일은 비활성화 (삭제)
+        moved = true // 이동했으니 true
+        nx=tx // 타일 좌표 변경
+        ny=ty
+        break
+      } else {
+        break
+      }
+    }
+    t.x = nx // while 안에서 계산한 좌표로 변경
+    t.y = ny
+  }
+  return moved // 이동 여부 리턴
+}
 
 addRandomTile(); // 랜덤 타일 생성
 const t = new Tile(256, 1, 1);
